@@ -23,7 +23,7 @@ Page element
 
 ```
 import { registerElement } from 'nativescript-angular/element-registry';
-registerElement('ImageZoom', () => require('nativescript-image-zoom').StarRating);
+registerElement('ImageZoom', () => require('nativescript-image-zoom').ImageZoom);
 ```
 
 ```xml

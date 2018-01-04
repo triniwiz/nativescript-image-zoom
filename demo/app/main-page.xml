@@ -1,0 +1,9 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page"
+  xmlns:ui="nativescript-image-zoom">
+  <GridLayout rows="auto,*,auto,auto" class="p-20">
+    <Label text="Zoom" class="t-20 text-center c-black" textWrap="true"/>
+    <ui:ImageZoom id="image" row="1" src="~/images/148080.jpg" maxZoom="6" />
+    <Button row="2" text="Remote Source" tap="loadRemoteSrc"/>
+    <Button row="3" text="Local Resource" tap="loadResource"/>
+  </GridLayout>
+</Page>

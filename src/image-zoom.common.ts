@@ -1,11 +1,17 @@
 import { Property, View } from 'tns-core-modules/ui/core/view';
+import { Stretch } from 'tns-core-modules/ui/image/image';
 
 export class ImageZoomBase extends View {
   src: string;
   zoomScale: number;
   minZoom: number;
   maxZoom: number;
+  stretch: string;
 }
+
+export const stretchProperty = new Property<ImageZoomBase, Stretch>({
+  name: 'stretch'
+});
 
 export const zoomScaleProperty = new Property<ImageZoomBase, number>({
   name: 'zoomScale',
@@ -27,6 +33,7 @@ export const srcProperty = new Property<ImageZoomBase, string>({
 });
 
 srcProperty.register(ImageZoomBase);
+stretchProperty.register(ImageZoomBase);
 zoomScaleProperty.register(ImageZoomBase);
 minZoomScaleProperty.register(ImageZoomBase);
 maxZoomScaleProperty.register(ImageZoomBase);

@@ -5,7 +5,7 @@ import {
   minZoomScaleProperty,
   zoomScaleProperty
 } from './image-zoom.common';
-import { Image } from 'tns-core-modules/ui/image';
+import { Image, stretchProperty, Stretch } from 'tns-core-modules/ui/image';
 import { layout } from 'tns-core-modules/ui/core/view';
 import { topmost } from 'tns-core-modules/ui/frame';
 import * as imageSource from 'tns-core-modules/image-source';
@@ -50,6 +50,10 @@ export class ImageZoom extends ImageZoomBase {
     } else {
       this._image.src = src;
     }
+  }
+
+  [stretchProperty.setNative](stretch: Stretch) {
+    this._image.stretch = stretch;
   }
 
   [zoomScaleProperty.setNative](scale: number) {

@@ -21,7 +21,7 @@ Page element
 
 #### Angular
 
-```
+```ts
 import { registerElement } from 'nativescript-angular/element-registry';
 registerElement('ImageZoom', () => require('nativescript-image-zoom').ImageZoom);
 ```
@@ -47,6 +47,6 @@ registerElement('ImageZoom', () => require('nativescript-image-zoom').ImageZoom)
 ## ScreenShots
 | IOS | Android|
 | --- | ---|
-|![IOS](https://i.imgur.com/XDBYVdW.gif) | ![Android](https://i.imgur.com/UL20npq.gif)|
+|![IOS](https://i.imgur.com/XDBYVdWh.gif) | ![Android](https://i.imgur.com/UL20npqh.gif)|
 
 

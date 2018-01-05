@@ -62,6 +62,8 @@ export class ImageZoom extends ImageZoomBase {
         );
         this.nativeView.setImage(source);
       });
+    } else {
+      source = com.davemorrissey.labs.subscaleview.ImageSource.uri(src);
     }
 
     if (this.nativeView && source) {

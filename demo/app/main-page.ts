@@ -1,5 +1,6 @@
 import * as observable from 'tns-core-modules/data/observable';
 import * as pages from 'tns-core-modules/ui/page';
+import { ImageSource, fromResource } from 'tns-core-modules/image-source';
 import { HelloWorldModel } from './main-view-model';
 import { ImageZoom } from 'nativescript-image-zoom';
 
@@ -21,5 +22,11 @@ export function loadRemoteSrc() {
 export function loadResource() {
   if (image) {
     image.src = 'res://image_302063';
+  }
+}
+
+export function loadImgSrc() {
+  if (image) {
+    image.src = <any>fromResource('image_302063');
   }
 }

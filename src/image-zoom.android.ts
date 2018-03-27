@@ -36,13 +36,14 @@ export class ImageZoom extends ImageZoomBase {
   [srcProperty.setNative](src: string) {
     if (!src) return;
     let source;
-    if (src.startsWith('~/')) {
+    const isString = typeof src === 'string';
+    if (isString && src.startsWith('~/')) {
       const uri = fs.path.join(
         fs.knownFolders.currentApp().path,
         src.replace('~/', '')
       );
       source = com.davemorrissey.labs.subscaleview.ImageSource.uri(uri);
-    } else if (src.startsWith('res://')) {
+    } else if (isString && src.startsWith('res://')) {
       const name = src.replace('res://', '');
       const identifier: number = utils.ad
         .getApplication()
@@ -55,13 +56,17 @@ export class ImageZoom extends ImageZoomBase {
       source = com.davemorrissey.labs.subscaleview.ImageSource.resource(
         identifier
       );
-    } else if (src.startsWith('http')) {
+    } else if (isString && src.startsWith('http')) {
       imageSource.fromUrl(src).then((data: imageSource.ImageSource) => {
         source = com.davemorrissey.labs.subscaleview.ImageSource.bitmap(
           data.android
         );
         this.nativeView.setImage(source);
       });
+    } else if (typeof src === 'object') {
+      source = com.davemorrissey.labs.subscaleview.ImageSource.bitmap(
+        (<imageSource.ImageSource>src).android
+      );
     } else {
       source = com.davemorrissey.labs.subscaleview.ImageSource.uri(src);
     }

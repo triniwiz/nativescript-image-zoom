@@ -59,7 +59,7 @@ export class ImageZoom extends ScrollView {
   }
 
   [srcProperty.setNative](src: string) {
-    if (src.startsWith('res://')) {
+    if (typeof src === 'string' && src.startsWith('res://')) {
       this._image.imageSource = imageSource.fromNativeSource(
         UIImage.imageNamed(src.replace('res://', ''))
       );

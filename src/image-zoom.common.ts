@@ -28,7 +28,7 @@ export const maxZoomScaleProperty = new Property<ImageZoomBase, number>({
   defaultValue: 4
 });
 
-export const srcProperty = new Property<ImageZoomBase, string>({
+export const srcProperty = new Property<ImageZoomBase, any>({
   name: 'src'
 });
 

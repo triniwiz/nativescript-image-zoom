@@ -2,7 +2,7 @@
   xmlns:ui="nativescript-image-zoom">
   <GridLayout rows="auto,*,auto,auto,auto" class="p-20">
     <Label text="Zoom" class="t-20 text-center c-black" textWrap="true"/>
-    <ui:ImageZoom id="image" row="1" src="~/images/148080.jpg" maxZoom="6" />
+    <ui:ImageZoom height="100%" stretch="fill" borderWidth="2" borderColor="red" borderRadius="50" id="image" row="1" src="~/images/148080.jpg" ></ui:ImageZoom>
     <Button row="2" text="Remote Source" tap="loadRemoteSrc"/>
     <Button row="3" text="Local Resource" tap="loadResource"/>
     <Button row="4" text="Load ImageSource" tap="loadImgSrc"/>

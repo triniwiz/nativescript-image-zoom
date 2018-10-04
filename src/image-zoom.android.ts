@@ -1,265 +1,336 @@
 import {
-  ImageZoomBase,
-  maxZoomScaleProperty,
-  minZoomScaleProperty,
-  srcProperty,
-  stretchProperty
+    ImageZoomBase,
+    maxZoomScaleProperty,
+    minZoomScaleProperty,
+    resizeProperty,
+    srcProperty,
+    stretchProperty
 } from './image-zoom.common';
 import * as fs from 'tns-core-modules/file-system';
 import * as utils from 'tns-core-modules/utils/utils';
 import * as types from 'tns-core-modules/utils/types';
-import * as bg from 'tns-core-modules/ui/styling/background';
 import * as imageSource from 'tns-core-modules/image-source';
 import { layout } from 'tns-core-modules/ui/core/view';
-import * as platform from 'tns-core-modules/platform';
-import * as app from 'tns-core-modules/application';
-import { Stretch } from 'tns-core-modules/ui/image/image';
 
-// declare const com;
+declare const com, jp;
 
 export class ImageZoom extends ImageZoomBase {
-  _stretch: any;
-  nativeView: TNSImageZoom;
-  public createNativeView() {
-    const nativeView = new TNSImageZoom(this._context);
-    nativeView.setOwner(new WeakRef(this));
-    return nativeView;
-  }
-  public initNativeView() {
-    if (this.nativeView) {
-      if (types.isNumber(this.minZoom)) {
-        this.nativeView.setMinimumScaleType(
-          com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-            .SCALE_TYPE_CUSTOM
+    picasso;
+    private builder;
+
+    constructor() {
+        super();
+    }
+
+    public createNativeView() {
+        this.picasso = (com as any).squareup.picasso.provider.PicassoProvider.get();
+        return new com.github.chrisbanes.photoview.PhotoView(this._context);
+    }
+
+    [minZoomScaleProperty.setNative](scale: number) {
+        if (this.nativeView && types.isNumber(scale)) {
+            this.nativeView.setMinimumScale(scale);
+            this.nativeView.setScaleLevels(
+                Number(scale),
+                Number(0.5833333333333334 * this.maxZoom),
+                Number(this.maxZoom)
+            );
+        }
+    }
+
+    [maxZoomScaleProperty.setNative](scale: number) {
+        if (this.nativeView && types.isNumber(scale)) {
+            this.nativeView.setScaleLevels(
+                Number(this.minZoom),
+                Number(0.5833333333333334 * scale),
+                Number(scale)
+            );
+        }
+    }
+
+    public initNativeView() {
+        this.nativeView.setScaleLevels(
+            Number(this.minZoom),
+            Number(0.5833333333333334 * this.maxZoom),
+            Number(this.maxZoom)
         );
-        this.nativeView.setMinScale(this.minZoom);
-      }
-
-      if (types.isNumber(this.maxZoom)) {
-        this.nativeView.setMaxScale(this.maxZoom);
-      }
-    }
-  }
-
-  [minZoomScaleProperty.getDefault](): number {
-    return null;
-  }
-
-  [maxZoomScaleProperty.getDefault](): number {
-    return null;
-  }
-
-  [stretchProperty.setNative](stretch: Stretch) {
-    switch (stretch) {
-      case 'aspectFill':
-        this.nativeView.setMinimumScaleType(
-          com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-            .SCALE_TYPE_CENTER_CROP
-        );
-        break;
-      case 'aspectFit':
-        this.nativeView.setMinimumScaleType(
-          com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-            .SCALE_TYPE_CENTER_INSIDE
-        );
-        break;
-      case 'fill':
-        this.nativeView.setMinimumScaleType(
-          com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-            .SCALE_TYPE_START
-        );
-        break;
-      default:
-        this.nativeView.setMinimumScaleType(
-          com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-            .SCALE_TYPE_CUSTOM
-        );
-        break;
-    }
-  }
-
-  [minZoomScaleProperty.setNative](scale: number) {
-    if (this.nativeView && types.isNumber(scale)) {
-      this.nativeView.setMinimumScaleType(
-        com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
-          .SCALE_TYPE_CUSTOM
-      );
-      this.nativeView.setMinScale(scale);
-    }
-  }
-
-  [maxZoomScaleProperty.setNative](scale: number) {
-    if (this.nativeView && types.isNumber(scale)) {
-      this.nativeView.setMaxScale(this.maxZoom);
-    }
-  }
-
-  [srcProperty.setNative](src: string) {
-    if (!src) return;
-    let source;
-    const isString = typeof src === 'string';
-    if (isString && src.startsWith('~/')) {
-      const uri = fs.path.join(
-        fs.knownFolders.currentApp().path,
-        src.replace('~/', '')
-      );
-      source = com.davemorrissey.labs.subscaleview.ImageSource.uri(uri);
-    } else if (isString && src.startsWith('res://')) {
-      const name = src.replace('res://', '');
-      const identifier: number = utils.ad
-        .getApplication()
-        .getResources()
-        .getIdentifier(
-          name,
-          'drawable',
-          utils.ad.getApplication().getPackageName()
-        );
-      source = com.davemorrissey.labs.subscaleview.ImageSource.resource(
-        identifier
-      );
-    } else if (isString && src.startsWith('http')) {
-      imageSource.fromUrl(src).then((data: imageSource.ImageSource) => {
-        source = com.davemorrissey.labs.subscaleview.ImageSource.bitmap(
-          data.android
-        );
-        this.nativeView.setImage(source);
-      });
-    } else if (typeof src === 'object') {
-      source = com.davemorrissey.labs.subscaleview.ImageSource.bitmap(
-        (<imageSource.ImageSource>src).android
-      );
-    } else {
-      source = com.davemorrissey.labs.subscaleview.ImageSource.uri(src);
-    }
-    if (this.nativeView && source) {
-      this.nativeView.setImage(source);
-    }
-  }
-}
-
-@JavaProxy('com.github.triniwiz.imagezoom.TNSImageZoom')
-export class TNSImageZoom extends com.davemorrissey.labs.subscaleview
-  .SubsamplingScaleImageView {
-  owner: WeakRef<ImageZoom>;
-  private paint: android.graphics.Paint;
-  private maskPaint: android.graphics.Paint;
-  private rectf: android.graphics.RectF;
-  private offscreenBitmap: android.graphics.Bitmap;
-  private mask: android.graphics.Bitmap;
-  constructor(context, attrs = null) {
-    super(context, attrs);
-    return global.__native(this);
-  }
-  setOwner(owner) {
-    this.owner = owner;
-  }
-  private createMask(
-    width,
-    height,
-    background: org.nativescript.widgets.BorderDrawable
-  ) {
-    if (!this.mask) {
-      this.mask = android.graphics.Bitmap.createBitmap(
-        width,
-        height,
-        android.graphics.Bitmap.Config.ALPHA_8
-      );
+        if (this.src) {
+            const image = this.getImage(this.src);
+            if (this.src.startsWith('res://')) {
+                if (+image > 0) {
+                    this.builder = this.picasso.load(image);
+                }
+            } else {
+                this.builder = this.picasso.load(image);
+            }
+        }
+        if (this.stretch) {
+            this.resetImage();
+        }
+        if (this.builder) {
+            if (
+                this.resize &&
+                this.resize !== undefined &&
+                this.resize.split(',').length > 1 &&
+                this.stretch !== 'fill'
+            ) {
+                this.builder.resize(
+                    parseInt(this.resize.split(',')[0], 10),
+                    parseInt(this.resize.split(',')[1], 10)
+                );
+            }
+            this.builder.into(this.nativeView);
+        }
     }
 
-    const canvas = new android.graphics.Canvas(this.mask);
-
-    const paint = new android.graphics.Paint(
-      android.graphics.Paint.ANTI_ALIAS_FLAG
-    );
-    paint.setColor(android.graphics.Color.WHITE);
-
-    canvas.drawRect(0, 0, width, height, paint);
-
-    paint.setXfermode(
-      new android.graphics.PorterDuffXfermode(
-        android.graphics.PorterDuff.Mode.CLEAR
-      )
-    );
-
-    if (background.hasUniformBorderColor()) {
-      canvas.drawRoundRect(
-        new android.graphics.RectF(0, 0, width, height),
-        layout.toDevicePixels(50),
-        layout.toDevicePixels(50),
-        paint
-      );
-      canvas.drawRect(new android.graphics.Rect(0, 0, 0, height), paint);
-    } else {
-      canvas.drawRoundRect(
-        new android.graphics.RectF(0, 0, width, height),
-        layout.toDevicePixels(50),
-        layout.toDevicePixels(50),
-        paint
-      );
-      canvas.drawRect(new android.graphics.Rect(0, 0, 0, height), paint);
+    private getResourceId(res: string = '') {
+        if (res.startsWith('res://')) {
+            return utils.ad.resources.getDrawableId(res.replace('res://', ''));
+        }
+        return 0;
     }
 
-    return this.mask;
-  }
-
-  public destroy() {
-    if (this.mask != null) {
-      this.mask.recycle();
+    set borderRadius(value: any) {
+        this.style.borderRadius = value;
+        this.setBorderAndRadius();
     }
 
-    if (this.offscreenBitmap != null) {
-      this.offscreenBitmap.recycle();
-    }
-  }
-
-  public onDraw(canvas: android.graphics.Canvas) {
-    if (!this.offscreenBitmap) {
-      this.offscreenBitmap = android.graphics.Bitmap.createBitmap(
-        canvas.getWidth(),
-        canvas.getHeight(),
-        android.graphics.Bitmap.Config.ARGB_8888
-      );
+    set borderWidth(value: any) {
+        this.style.borderWidth = value;
+        this.setBorderAndRadius();
     }
 
-    const offscreenCanvas = new android.graphics.Canvas(this.offscreenBitmap);
-
-    super.onDraw(offscreenCanvas);
-    if (!this.isReady()) {
-      return;
+    set borderLeftWidth(value: any) {
+        this.style.borderLeftWidth = value;
+        this.setBorderAndRadius();
     }
 
-    if (!this.paint) {
-      (this as any).setLayerType(android.view.View.LAYER_TYPE_SOFTWARE, null);
-
-      this.paint = new android.graphics.Paint(
-        android.graphics.Paint.ANTI_ALIAS_FLAG
-      );
-
-      this.maskPaint = new android.graphics.Paint(
-        android.graphics.Paint.ANTI_ALIAS_FLAG |
-          android.graphics.Paint.FILTER_BITMAP_FLAG
-      );
-      this.maskPaint.setXfermode(
-        new android.graphics.PorterDuffXfermode(
-          android.graphics.PorterDuff.Mode.CLEAR
-        )
-      );
+    set borderRightWidth(value: any) {
+        this.style.borderRightWidth = value;
+        this.setBorderAndRadius();
     }
 
-    const owner = this.owner && this.owner.get() ? this.owner.get() : null;
-    if (owner) {
-      const background = owner.nativeViewProtected.getBackground() as org.nativescript.widgets.BorderDrawable;
-
-      const maskBitmap = this.createMask(
-        canvas.getWidth(),
-        canvas.getHeight(),
-        background
-      );
-      if (maskBitmap !== null) {
-        offscreenCanvas.drawBitmap(maskBitmap, 0, 0, this.maskPaint);
-        canvas.drawBitmap(this.offscreenBitmap, 0, 0, this.paint);
-      }
-      background.draw(canvas);
+    set borderBottomWidth(value: any) {
+        this.style.borderBottomWidth = value;
+        this.setBorderAndRadius();
     }
-  }
+
+    set borderTopWidth(value: any) {
+        this.style.borderTopWidth = value;
+        this.setBorderAndRadius();
+    }
+
+    set borderBottomLeftRadius(value: any) {
+        this.style.borderBottomLeftRadius = value;
+        this.setBorderAndRadius();
+    }
+
+    set borderBottomRightRadius(value: any) {
+        this.style.borderBottomRightRadius = value;
+        this.setBorderAndRadius();
+    }
+
+    set borderTopLeftRadius(value: any) {
+        this.style.borderTopLeftRadius = value;
+        this.setBorderAndRadius();
+    }
+
+    set borderTopRightRadius(value: any) {
+        this.style.borderTopRightRadius = value;
+        this.setBorderAndRadius();
+    }
+
+    [srcProperty.getDefault](): any {
+        return undefined;
+    }
+
+    [srcProperty.setNative](src: any) {
+        if (!this.builder) {
+            const image = this.getImage(src);
+            if (types.isString(src) && this.src.startsWith('res://')) {
+                if (+image > 0) {
+                    this.builder = this.picasso.load(image);
+                }
+            } else {
+                this.builder = this.picasso.load(image);
+            }
+        }
+        if (this.stretch) {
+            this.resetImage();
+        }
+        this.setBorderAndRadius();
+        this.builder.into(this.nativeView);
+        return src;
+    }
+
+    [resizeProperty.setNative](resize: string) {
+        if (!this.builder) {
+            return resize;
+        }
+        if (
+            resize &&
+            resize !== undefined &&
+            resize.split(',').length > 1 &&
+            this.stretch !== 'fill'
+        ) {
+            this.builder.resize(
+                parseInt(resize.split(',')[0], 10),
+                parseInt(resize.split(',')[1], 10)
+            );
+        }
+        return resize;
+    }
+
+    private getImage(src: any): any {
+        let nativeImage;
+        if (types.isNullOrUndefined(src)) {
+            return src;
+        }
+        if (typeof src === 'string' && src.substr(0, 1) === '/') {
+            nativeImage = new java.io.File(src);
+        } else if (typeof src === 'string' && src.startsWith('~/')) {
+            nativeImage = new java.io.File(
+                fs.path.join(fs.knownFolders.currentApp().path, src.replace('~/', ''))
+            );
+        } else if (typeof src === 'string' && src.startsWith('http')) {
+            nativeImage = src;
+        } else if (typeof src === 'string' && src.startsWith('res://')) {
+            nativeImage = utils.ad.resources.getDrawableId(src.replace('res://', ''));
+        } else if (typeof src === 'object') {
+            const tempFile = fs.path.join(
+                fs.knownFolders.currentApp().path,
+                `${Date.now()} + .png`
+            );
+            const saved = (<imageSource.ImageSource>src).saveToFile(tempFile, 'png');
+            if (saved) {
+                nativeImage = new java.io.File(tempFile);
+            }
+        }
+        return nativeImage;
+    }
+
+    [stretchProperty.getDefault](): 'aspectFit' {
+        return 'aspectFit';
+    }
+
+    [stretchProperty.setNative](
+        value: 'none' | 'aspectFill' | 'aspectFit' | 'fill'
+    ) {
+        if (!this.builder) return value;
+        this.resetImage(true);
+        return value;
+    }
+
+    public clearItem() {
+    }
+
+    private setBorderAndRadius() {
+        if (!this.builder) return;
+
+        const RoundedCornersTransformation =
+            jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
+        this.builder = this.builder
+            .transform(
+                new RoundedCornersTransformation(
+                    layout.toDevicePixels(<any>this.style.borderTopLeftRadius),
+                    layout.toDevicePixels(<any>this.style.borderTopWidth),
+                    RoundedCornersTransformation.CornerType.TOP_LEFT
+                )
+            )
+            .transform(
+                new RoundedCornersTransformation(
+                    layout.toDevicePixels(<any>this.style.borderTopRightRadius),
+                    layout.toDevicePixels(<any>this.style.borderTopWidth),
+                    RoundedCornersTransformation.CornerType.TOP_RIGHT
+                )
+            )
+            .transform(
+                new RoundedCornersTransformation(
+                    layout.toDevicePixels(<any>this.style.borderBottomLeftRadius),
+                    layout.toDevicePixels(<any>this.style.borderBottomWidth),
+                    RoundedCornersTransformation.CornerType.BOTTOM_LEFT
+                )
+            )
+            .transform(
+                new RoundedCornersTransformation(
+                    layout.toDevicePixels(<any>this.style.borderBottomRightRadius),
+                    layout.toDevicePixels(<any>this.style.borderBottomWidth),
+                    RoundedCornersTransformation.CornerType.BOTTOM_RIGHT
+                )
+            );
+    }
+
+    /**
+     * Helper method to call the Picasso resize method, which is necessary before centerCrop() and centerInside().
+     * Will use the `resize` value if provided, next is the `height` and `width` of the imageCacheIt instance
+     * last is the parent which is probably not reliable.
+     * Only used when aspectFit or aspectFill are set on the stretch property.
+     */
+    private setAspectResize() {
+        let newSize;
+        if (
+            this.resize &&
+            this.resize !== undefined &&
+            this.resize.split(',').length > 1
+        ) {
+            newSize = {
+                width: parseInt(this.resize.split(',')[0], 10),
+                height: parseInt(this.resize.split(',')[1], 10)
+            };
+        } else if (this.width || this.height) {
+            // use the images height/width (need to be set - more gurds if needed)
+            newSize = {
+                width: parseInt(this.width.toString(), 10),
+                height: parseInt(this.height.toString(), 10)
+            };
+        } else {
+            // use parent size (worth a shot I guess but probably not going to work here reliably)
+            newSize = {
+                width: this.parent.effectiveWidth,
+                height: this.parent.effectiveHeight
+            };
+        }
+
+        this.builder.resize(newSize.width, newSize.height);
+    }
+
+    private resetImage(reload = false) {
+        if (!this.builder) return;
+        switch (this.stretch) {
+            case 'aspectFit':
+                this.builder = this.picasso.load(this.getImage(this.src));
+                this.setBorderAndRadius();
+                this.setAspectResize();
+                this.builder.centerInside();
+                if (reload) {
+                    this.builder.into(this.nativeView);
+                }
+                break;
+            case 'aspectFill':
+                this.builder = this.picasso.load(this.getImage(this.src));
+                this.setBorderAndRadius();
+                this.setAspectResize();
+                this.builder.centerCrop();
+                if (reload) {
+                    this.builder.into(this.nativeView);
+                }
+                break;
+            case 'fill':
+                this.builder = this.picasso.load(this.getImage(this.src));
+                this.setBorderAndRadius();
+                this.builder.fit();
+                if (reload) {
+                    this.builder.into(this.nativeView);
+                }
+                break;
+            case 'none':
+            default:
+                this.builder = this.picasso.load(this.getImage(this.src));
+                this.setBorderAndRadius();
+                if (reload) {
+                    this.builder.into(this.nativeView);
+                }
+                break;
+        }
+    }
 }

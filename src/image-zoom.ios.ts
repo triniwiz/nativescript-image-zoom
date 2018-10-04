@@ -1,117 +1,127 @@
-import { Image, Stretch } from 'tns-core-modules/ui/image';
-import { layout } from 'tns-core-modules/ui/core/view';
-import { topmost } from 'tns-core-modules/ui/frame';
+import { Stretch } from 'tns-core-modules/ui/image';
 import * as imageSource from 'tns-core-modules/image-source';
-import { ScrollView } from 'tns-core-modules/ui/scroll-view';
+import {
+    ImageZoomBase,
+    maxZoomScaleProperty,
+    minZoomScaleProperty,
+    srcProperty,
+    stretchProperty,
+    zoomScaleProperty
+} from './image-zoom.common';
+import * as fs from 'tns-core-modules/file-system';
 
-import { Property } from 'tns-core-modules/ui/core/view';
+export class ImageZoom extends ImageZoomBase {
+    _image: any;
+    private delegate: any;
 
-export const stretchProperty = new Property<ImageZoom, Stretch>({
-  name: 'stretch'
-});
-
-export const zoomScaleProperty = new Property<ImageZoom, number>({
-  name: 'zoomScale',
-  defaultValue: 1
-});
-
-export const minZoomScaleProperty = new Property<ImageZoom, number>({
-  name: 'minZoom',
-  defaultValue: 1
-});
-
-export const maxZoomScaleProperty = new Property<ImageZoom, number>({
-  name: 'maxZoom',
-  defaultValue: 4
-});
-
-export const srcProperty = new Property<ImageZoom, string>({
-  name: 'src'
-});
-
-export class ImageZoom extends ScrollView {
-  _image: Image;
-  nativeView: UIScrollView;
-  private layoutWidth: number;
-  private layoutHeight: number;
-  private delegate: any;
-  src: string;
-  zoomScale: number;
-  minZoom: number;
-  maxZoom: number;
-  stretch: string;
-  constructor() {
-    super();
-    this.delegate = UIScrollViewDelegateImpl.initWithOwner(
-      new WeakRef<ImageZoom>(this)
-    );
-    const nativeView = this.nativeView;
-    this._image = new Image();
-    nativeView.delegate = this.delegate;
-    nativeView.zoomScale = this.zoomScale;
-    nativeView.minimumZoomScale = this.minZoom;
-    nativeView.maximumZoomScale = this.maxZoom;
-    this.content = this._image;
-  }
-
-  public disposeNativeView() {
-    this.delegate = null;
-  }
-
-  [srcProperty.setNative](src: string) {
-    if (typeof src === 'string' && src.startsWith('res://')) {
-      this._image.imageSource = imageSource.fromNativeSource(
-        UIImage.imageNamed(src.replace('res://', ''))
-      );
-    } else {
-      this._image.src = src;
+    constructor() {
+        super();
     }
-  }
 
-  [stretchProperty.setNative](stretch: Stretch) {
-    this._image.stretch = stretch;
-  }
-
-  [zoomScaleProperty.setNative](scale: number) {
-    if (this.nativeView) {
-      this.nativeView.zoomScale = scale;
+    public createNativeView() {
+        this._image = UIImageView.new();
+        this._image.clipsToBounds = true;
+        const nativeView = UIScrollView.new();
+        nativeView.addSubview(this._image);
+        nativeView.zoomScale = this.zoomScale;
+        nativeView.minimumZoomScale = this.minZoom;
+        nativeView.maximumZoomScale = this.maxZoom;
+        return nativeView;
     }
-  }
 
-  [minZoomScaleProperty.setNative](scale: number) {
-    if (this.nativeView) {
-      this.nativeView.minimumZoomScale = scale;
+    public disposeNativeView() {
+        this.delegate = null;
     }
-  }
 
-  [maxZoomScaleProperty.setNative](scale: number) {
-    if (this.nativeView) {
-      this.nativeView.maximumZoomScale = scale;
+    public onLayout(left: number, top: number, right: number, bottom: number): void {
+        super.onLayout(left, top, right, bottom);
+        this._image.frame = this.nativeView.bounds;
     }
-  }
+
+    public initNativeView() {
+        this.delegate = UIScrollViewDelegateImpl.initWithOwner(
+            new WeakRef<ImageZoom>(this)
+        );
+        this.nativeView.delegate = this.delegate;
+    }
+
+    [stretchProperty.setNative](value: 'none' | 'aspectFill' | 'aspectFit' | 'fill') {
+        switch (value) {
+            case 'aspectFit':
+                this.nativeViewProtected.contentMode = UIViewContentMode.ScaleAspectFit;
+                break;
+
+            case 'aspectFill':
+                this.nativeViewProtected.contentMode = UIViewContentMode.ScaleAspectFill;
+                break;
+
+            case 'fill':
+                this.nativeViewProtected.contentMode = UIViewContentMode.ScaleToFill;
+                break;
+
+            case 'none':
+            default:
+                this.nativeViewProtected.contentMode = UIViewContentMode.TopLeft;
+                break;
+        }
+    }
+
+
+    [srcProperty.setNative](src: any) {
+        if (typeof src === 'string' && src.startsWith('res://')) {
+            this._image.image = UIImage.imageNamed(src.replace('res://', ''));
+        } else if (typeof src === 'object') {
+            this._image.image = src.ios;
+        } else if (typeof src === 'string' && src.startsWith('http')) {
+            imageSource.fromUrl(src).then(source => {
+                this._image.image = source.ios;
+            });
+        } else if (typeof src === 'string' && src.startsWith('~')) {
+            this._image.image = UIImage.imageWithContentsOfFile(fs.path.join(fs.knownFolders.currentApp().path, src.replace('~', '')));
+
+        } else {
+            this._image.image = UIImage.imageWithContentsOfFile(src);
+        }
+    }
+
+    [stretchProperty.setNative](stretch: Stretch) {
+        this._image.stretch = stretch;
+    }
+
+    [zoomScaleProperty.setNative](scale: number) {
+        if (this.nativeView) {
+            this.nativeView.zoomScale = scale;
+        }
+    }
+
+    [minZoomScaleProperty.setNative](scale: number) {
+        if (this.nativeView) {
+            this.nativeView.minimumZoomScale = scale;
+        }
+    }
+
+    [maxZoomScaleProperty.setNative](scale: number) {
+        if (this.nativeView) {
+            this.nativeView.maximumZoomScale = scale;
+        }
+    }
 }
 
-srcProperty.register(ImageZoom);
-stretchProperty.register(ImageZoom);
-zoomScaleProperty.register(ImageZoom);
-minZoomScaleProperty.register(ImageZoom);
-maxZoomScaleProperty.register(ImageZoom);
-
 export class UIScrollViewDelegateImpl extends NSObject
-  implements UIScrollViewDelegate {
-  private owner: WeakRef<ImageZoom>;
-  public static ObjCProtocols = [UIScrollViewDelegate];
+    implements UIScrollViewDelegate {
+    private owner: WeakRef<ImageZoom>;
+    public static ObjCProtocols = [UIScrollViewDelegate];
 
-  public static initWithOwner(
-    owner: WeakRef<ImageZoom>
-  ): UIScrollViewDelegateImpl {
-    const delegate = new UIScrollViewDelegateImpl();
-    delegate.owner = owner;
-    return delegate;
-  }
+    public static initWithOwner(
+        owner: WeakRef<ImageZoom>
+    ): UIScrollViewDelegateImpl {
+        const delegate = new UIScrollViewDelegateImpl();
+        delegate.owner = owner;
+        return delegate;
+    }
 
-  viewForZoomingInScrollView(scrollView: UIScrollView) {
-    const owner = this.owner.get();
-    return owner._image.nativeView;
-  }
+    viewForZoomingInScrollView(scrollView: UIScrollView) {
+        const owner = this.owner.get();
+        return owner._image;
+    }
 }

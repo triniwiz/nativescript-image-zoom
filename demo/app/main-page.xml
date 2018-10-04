@@ -1,10 +1,17 @@
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page"
-  xmlns:ui="nativescript-image-zoom">
-  <GridLayout rows="auto,*,auto,auto,auto" class="p-20">
-    <Label text="Zoom" class="t-20 text-center c-black" textWrap="true"/>
-    <ui:ImageZoom height="100%" stretch="fill" borderWidth="2" borderColor="red" borderRadius="50" id="image" row="1" src="~/images/148080.jpg" ></ui:ImageZoom>
-    <Button row="2" text="Remote Source" tap="loadRemoteSrc"/>
-    <Button row="3" text="Local Resource" tap="loadResource"/>
-    <Button row="4" text="Load ImageSource" tap="loadImgSrc"/>
-  </GridLayout>
+<Page
+        xmlns="http://schemas.nativescript.org/tns.xsd" loaded="pageLoaded" class="page"
+        xmlns:ui="nativescript-image-zoom"
+        xmlns:Card="nativescript-cardview"
+>
+    <GridLayout rows="auto,*,auto,auto,auto" class="p-20">
+        <Label text="Zoom" class="t-20 text-center c-black" textWrap="true"/>
+        <GridLayout row="1">
+            <Card:CardView margin="10" radius="20" elevation="40">
+                <ui:ImageZoom borderRadius="20" stretch="fill" height="100%" width="100%" id="image" src="~/images/148080.jpg"/>
+            </Card:CardView>
+        </GridLayout>
+        <Button row="2" text="Remote Source" tap="loadRemoteSrc"/>
+        <Button row="3" text="Local Resource" tap="loadResource"/>
+        <Button row="4" text="Load ImageSource" tap="loadImgSrc"/>
+    </GridLayout>
 </Page>

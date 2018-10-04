@@ -7,7 +7,12 @@ export class ImageZoomBase extends View {
   minZoom: number;
   maxZoom: number;
   stretch: string;
+  resize: string;
 }
+
+export const resizeProperty = new Property<ImageZoomBase, string>({
+  name: 'resize'
+});
 
 export const stretchProperty = new Property<ImageZoomBase, Stretch>({
   name: 'stretch'
@@ -37,3 +42,4 @@ stretchProperty.register(ImageZoomBase);
 zoomScaleProperty.register(ImageZoomBase);
 minZoomScaleProperty.register(ImageZoomBase);
 maxZoomScaleProperty.register(ImageZoomBase);
+resizeProperty.register(ImageZoomBase);

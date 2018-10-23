@@ -1,6 +1,6 @@
 {
     "name": "nativescript-image-zoom",
-    "version": "3.0.2",
+    "version": "3.0.3",
     "description": "Zoom enabled ImageView for NativeScript",
     "main": "image-zoom",
     "typings": "index.d.ts",

@@ -9,7 +9,7 @@ import {
     zoomScaleProperty
 } from './image-zoom.common';
 import * as fs from 'tns-core-modules/file-system';
-
+import { layout } from 'tns-core-modules/ui/core/view';
 export class ImageZoom extends ImageZoomBase {
     _image: any;
     private delegate: any;
@@ -36,6 +36,15 @@ export class ImageZoom extends ImageZoomBase {
     public onLayout(left: number, top: number, right: number, bottom: number): void {
         super.onLayout(left, top, right, bottom);
         this._image.frame = this.nativeView.bounds;
+    }
+
+    public onMeasure(widthMeasureSpec: number, heightMeasureSpec: number) {
+        const nativeView = this.nativeView;
+        if (nativeView) {
+            const width = layout.getMeasureSpecSize(widthMeasureSpec);
+            const height = layout.getMeasureSpecSize(heightMeasureSpec);
+            this.setMeasuredDimension(width, height);
+        }
     }
 
     public initNativeView() {

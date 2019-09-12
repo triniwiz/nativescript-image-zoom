@@ -56,13 +56,7 @@ export class ImageZoom extends ImageZoomBase {
         );
         if (this.src) {
             const image = this.getImage(this.src);
-            if (this.src.startsWith('res://')) {
-                if (+image > 0) {
-                    this.builder = this.picasso.load(image);
-                }
-            } else {
-                this.builder = this.picasso.load(image);
-            }
+            this.builder = this.picasso.load(image);
         }
         if (this.stretch) {
             this.resetImage();
@@ -147,13 +141,7 @@ export class ImageZoom extends ImageZoomBase {
     [srcProperty.setNative](src: any) {
         if (!this.builder) {
             const image = this.getImage(src);
-            if (types.isString(src) && this.src.startsWith('res://')) {
-                if (+image > 0) {
-                    this.builder = this.picasso.load(image);
-                }
-            } else {
-                this.builder = this.picasso.load(image);
-            }
+            this.builder = this.picasso.load(image);
         }
         if (this.stretch) {
             this.resetImage();

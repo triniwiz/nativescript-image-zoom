@@ -1,6 +1,6 @@
 {
     "name": "@happones/nativescript-image-zoom",
-    "version": "4.0.0",
+    "version": "4.0.1",
     "description": "Zoom enabled ImageView for NativeScript",
     "main": "image-zoom",
     "typings": "index.d.ts",

@@ -1,5 +1,5 @@
-import { Stretch } from 'tns-core-modules/ui/image';
-import * as imageSource from 'tns-core-modules/image-source';
+import { Stretch } from '@nativescript/core/ui/image';
+import * as imageSource from '@nativescript/core/image-source';
 import {
     ImageZoomBase,
     maxZoomScaleProperty,
@@ -8,8 +8,8 @@ import {
     stretchProperty,
     zoomScaleProperty
 } from './image-zoom.common';
-import * as fs from 'tns-core-modules/file-system';
-import { layout } from 'tns-core-modules/ui/core/view';
+import * as fs from '@nativescript/core/file-system';
+import * as layout  from '@nativescript/core/utils/layout-helper';
 export class ImageZoom extends ImageZoomBase {
     _image: any;
     private delegate: any;
@@ -117,21 +117,23 @@ export class ImageZoom extends ImageZoomBase {
     }
 }
 
+@NativeClass()
+
 export class UIScrollViewDelegateImpl extends NSObject
     implements UIScrollViewDelegate {
-    private owner: WeakRef<ImageZoom>;
+    private _owner: WeakRef<ImageZoom>;
     public static ObjCProtocols = [UIScrollViewDelegate];
 
     public static initWithOwner(
         owner: WeakRef<ImageZoom>
     ): UIScrollViewDelegateImpl {
-        const delegate = new UIScrollViewDelegateImpl();
-        delegate.owner = owner;
+        const delegate = <UIScrollViewDelegateImpl>UIScrollViewDelegateImpl.new();
+        delegate._owner = owner;
         return delegate;
     }
 
     viewForZoomingInScrollView(scrollView: UIScrollView) {
-        const owner = this.owner.get();
+        const owner = this._owner.get();
         return owner._image;
     }
 }

@@ -1,8 +1,7 @@
-import * as observable from 'tns-core-modules/data/observable';
-import * as pages from 'tns-core-modules/ui/page';
-import { ImageSource, fromResource } from 'tns-core-modules/image-source';
+import * as observable from '@nativescript/core/data/observable';
+import * as pages from '@nativescript/core/ui/page';
 import { HelloWorldModel } from './main-view-model';
-import { ImageZoom } from 'nativescript-image-zoom';
+import { ImageZoom } from '@happones/nativescript-image-zoom';
 
 let image: ImageZoom;
 
@@ -27,6 +26,6 @@ export function loadResource() {
 
 export function loadImgSrc() {
   if (image) {
-    image.src = <any>fromResource('image_302063');
+    image.src = '~/images/148080.jpg';
   }
 }

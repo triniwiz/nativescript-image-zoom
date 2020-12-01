@@ -1,35 +1,41 @@
 {
     "compilerOptions": {
-        "target": "es5",
-        "module": "commonjs",
+        "target": "es2017",
+        "module": "esnext",
         "declaration": false,
-        "removeComments": true,
+        "noImplicitAny": false,
+        "removeComments": false,
+        "watch": false,
         "noLib": false,
+        "noEmitHelpers": true,
+        "preserveConstEnums": true,
         "emitDecoratorMetadata": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "noImplicitUseStrict": true,
         "experimentalDecorators": true,
         "lib": [
             "es6",
-            "dom"
+            "dom",
+            "es2015.iterable",
+            "es2017"
         ],
-        "pretty": true,
-        "allowUnreachableCode": false,
-        "allowUnusedLabels": false,
-        "noEmitHelpers": true,
-        "noEmitOnError": false,
-        "noImplicitAny": false,
-        "noImplicitReturns": true,
-        "noImplicitUseStrict": false,
-        "noFallthroughCasesInSwitch": true,
         "baseUrl": ".",
         "paths": {
+            "~/*": [
+                "app/*"
+            ],
             "*": [
                 "./node_modules/*"
             ]
-        }
+        },
+        "moduleResolution": "node"
     },
+    "include": [
+        "app/**/*",
+        "references.d.ts"
+    ],
     "exclude": [
         "node_modules",
         "platforms"
-    ],
-    "compileOnSave": false
+    ]
 }

@@ -4,8 +4,7 @@
     "@nativescript/core": "^7.0.13",
     "@nativescript/theme": "^3.0.0",
     "@nstudio/nativescript-cardview": "^2.0.1",
-    "nativescript-unit-test-runner": "^0.3.4",
-    "@nativescript/webpack": "3.0.0"
+    "nativescript-unit-test-runner": "^0.3.4"
   },
   "devDependencies": {
     "@babel/core": "~7.5.5",

@@ -1,10 +1,18 @@
 # NativeScript Image Zoom
 
-[![npm](https://img.shields.io/npm/v/nativescript-image-zoom.svg)](https://www.npmjs.com/package/nativescript-image-zoom)
-[![npm](https://img.shields.io/npm/dt/nativescript-image-zoom.svg?label=npm%20downloads)](https://www.npmjs.com/package/nativescript-image-zoom)
-[![Build Status](https://travis-ci.org//triniwiz/nativescript-image-zoom.svg?branch=master)](https://travis-ci.org/triniwiz/nativescript-image-zoom)
+[![npm](https://img.shields.io/npm/v/@happones/nativescript-image-zoom.svg)](https://www.npmjs.com/package/@happones/nativescript-image-zoom)
+[![npm](https://img.shields.io/npm/dt/@happones/nativescript-image-zoom.svg?label=npm%20downloads)](https://www.npmjs.com/package/@happones/nativescript-image-zoom)
 
 ## Installation
+
+NativeScript 7+:
+
+
+```
+tns plugin add @happones/nativescript-image-zoom
+```
+
+NativeScript > 7:
 
 ```
 tns plugin add nativescript-image-zoom

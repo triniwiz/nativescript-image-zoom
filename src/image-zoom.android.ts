@@ -6,11 +6,11 @@ import {
     srcProperty,
     stretchProperty
 } from './image-zoom.common';
-import * as fs from 'tns-core-modules/file-system';
-import * as utils from 'tns-core-modules/utils/utils';
-import * as types from 'tns-core-modules/utils/types';
-import * as imageSource from 'tns-core-modules/image-source';
-import { layout } from 'tns-core-modules/ui/core/view';
+import * as fs from '@nativescript/core/file-system';
+import * as utils from '@nativescript/core/utils/utils';
+import * as types from '@nativescript/core/utils/types';
+import * as imageSource from '@nativescript/core/image-source';
+import * as layout from '@nativescript/core/utils/layout-helper';
 
 declare const com, jp;
 
@@ -93,6 +93,7 @@ export class ImageZoom extends ImageZoomBase {
         this.style.borderWidth = value;
         this.setBorderAndRadius();
     }
+
 
     set borderLeftWidth(value: any) {
         this.style.borderLeftWidth = value;

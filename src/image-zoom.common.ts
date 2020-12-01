@@ -1,5 +1,5 @@
-import { Property, View } from 'tns-core-modules/ui/core/view';
-import { Stretch } from 'tns-core-modules/ui/image/image';
+import { Property, View } from '@nativescript/core/ui/core/view';
+import { Stretch } from '@nativescript/core/ui/image';
 
 export class ImageZoomBase extends View {
   src: string;

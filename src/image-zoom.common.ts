@@ -1,8 +1,10 @@
-import { Property, View } from '@nativescript/core/ui/core/view';
+import { Property, View, ImageSource} from '@nativescript/core';
 import { Stretch } from '@nativescript/core/ui/image';
 
 export class ImageZoomBase extends View {
-  src: string;
+  android: any;
+  ios: any;
+  src: string | ImageSource;
   zoomScale: number;
   minZoom: number;
   maxZoom: number;

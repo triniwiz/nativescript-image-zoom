@@ -1,5 +1,10 @@
 import { Stretch } from '@nativescript/core/ui/image';
-import * as imageSource from '@nativescript/core/image-source';
+import {
+    ImageSource,
+    knownFolders,
+    path,
+    Utils
+} from '@nativescript/core';
 import {
     ImageZoomBase,
     maxZoomScaleProperty,
@@ -8,8 +13,8 @@ import {
     stretchProperty,
     zoomScaleProperty
 } from './image-zoom.common';
-import * as fs from '@nativescript/core/file-system';
 import * as layout  from '@nativescript/core/utils/layout-helper';
+
 export class ImageZoom extends ImageZoomBase {
     _image: any;
     private delegate: any;
@@ -83,11 +88,11 @@ export class ImageZoom extends ImageZoomBase {
         } else if (typeof src === 'object') {
             this._image.image = src.ios;
         } else if (typeof src === 'string' && src.startsWith('http')) {
-            imageSource.fromUrl(src).then(source => {
+            ImageSource.fromUrl(src).then(source => {
                 this._image.image = source.ios;
             });
         } else if (typeof src === 'string' && src.startsWith('~')) {
-            this._image.image = UIImage.imageWithContentsOfFile(fs.path.join(fs.knownFolders.currentApp().path, src.replace('~', '')));
+            this._image.image = UIImage.imageWithContentsOfFile(path.join(knownFolders.currentApp().path, src.replace('~', '')));
 
         } else {
             this._image.image = UIImage.imageWithContentsOfFile(src);

@@ -1,4 +1,4 @@
-import { ImageZoom } from '../index';
+import { ImageZoom } from '../image-zoom';
 
 const ImageZoomPlugin = {
     install(Vue) {

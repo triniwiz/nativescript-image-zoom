@@ -38,6 +38,18 @@ registerElement('ImageZoom', () => require('nativescript-image-zoom').ImageZoom)
 <ImageZoom src="~/images/148080.jpg" maxZoom="5" minZoom="2"></ImageZoom>
 ```
 
+#### Vue
+
+```ts
+import ImageZoomPlugin from '@happones/nativescript-image-zoom/vue';
+
+Vue.use(ImageZoomPlugin);
+```
+
+```xml
+<ImageZoom src="~/images/148080.jpg" maxZoom="5" minZoom="2"></ImageZoom>
+```
+
 
 # API
 

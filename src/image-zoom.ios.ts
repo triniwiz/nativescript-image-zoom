@@ -122,23 +122,21 @@ export class ImageZoom extends ImageZoomBase {
     }
 }
 
-@NativeClass()
-
 export class UIScrollViewDelegateImpl extends NSObject
     implements UIScrollViewDelegate {
-    private _owner: WeakRef<ImageZoom>;
+    private owner: WeakRef<ImageZoom>;
     public static ObjCProtocols = [UIScrollViewDelegate];
 
     public static initWithOwner(
         owner: WeakRef<ImageZoom>
     ): UIScrollViewDelegateImpl {
-        const delegate = <UIScrollViewDelegateImpl>UIScrollViewDelegateImpl.new();
-        delegate._owner = owner;
+        const delegate = new UIScrollViewDelegateImpl();
+        delegate.owner = owner;
         return delegate;
     }
 
     viewForZoomingInScrollView(scrollView: UIScrollView) {
-        const owner = this._owner.get();
+        const owner = this.owner.get();
         return owner._image;
     }
 }

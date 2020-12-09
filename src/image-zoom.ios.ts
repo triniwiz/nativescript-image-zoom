@@ -1,5 +1,5 @@
-import { Stretch } from 'tns-core-modules/ui/image';
-import * as imageSource from 'tns-core-modules/image-source';
+import { Stretch } from '@nativescript/core/ui/image';
+import * as imageSource from '@nativescript/core/image-source';
 import {
     ImageZoomBase,
     maxZoomScaleProperty,
@@ -8,8 +8,8 @@ import {
     stretchProperty,
     zoomScaleProperty
 } from './image-zoom.common';
-import * as fs from 'tns-core-modules/file-system';
-import { layout } from 'tns-core-modules/ui/core/view';
+import * as fs from '@nativescript/core/file-system';
+import { Utils, GestureTypes } from '@nativescript/core';
 export class ImageZoom extends ImageZoomBase {
     _image: any;
     private delegate: any;
@@ -30,6 +30,10 @@ export class ImageZoom extends ImageZoomBase {
         return nativeView;
     }
 
+    public setTapListener( listener ) {
+        this.on(GestureTypes.tap, listener);
+    }
+
     public disposeNativeView() {
         this.delegate = null;
     }
@@ -42,8 +46,8 @@ export class ImageZoom extends ImageZoomBase {
     public onMeasure(widthMeasureSpec: number, heightMeasureSpec: number) {
         const nativeView = this.nativeView;
         if (nativeView) {
-            const width = layout.getMeasureSpecSize(widthMeasureSpec);
-            const height = layout.getMeasureSpecSize(heightMeasureSpec);
+            const width = Utils.layout.getMeasureSpecSize(widthMeasureSpec);
+            const height = Utils.layout.getMeasureSpecSize(heightMeasureSpec);
             this.setMeasuredDimension(width, height);
         }
     }
@@ -117,6 +121,7 @@ export class ImageZoom extends ImageZoomBase {
     }
 }
 
+@NativeClass()
 export class UIScrollViewDelegateImpl extends NSObject
     implements UIScrollViewDelegate {
     private owner: WeakRef<ImageZoom>;
@@ -134,4 +139,10 @@ export class UIScrollViewDelegateImpl extends NSObject
         const owner = this.owner.get();
         return owner._image;
     }
+
+    scrollViewDidZoom (scrollView: UIScrollView) {
+        let offsetX = Math.max((scrollView.bounds.size.width - scrollView.contentSize.width) * 0.5, 0)
+        let offsetY = Math.max((scrollView.bounds.size.height - scrollView.contentSize.height) * 0.5, 0)
+        scrollView.contentInset = UIEdgeInsetsFromString(`{${offsetY},${offsetX},0,0}`)
+    };
 }

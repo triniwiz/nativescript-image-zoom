@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
     ImageZoomBase,
     maxZoomScaleProperty,
@@ -6,11 +7,11 @@ import {
     srcProperty,
     stretchProperty
 } from './image-zoom.common';
-import * as fs from 'tns-core-modules/file-system';
-import * as utils from 'tns-core-modules/utils/utils';
-import * as types from 'tns-core-modules/utils/types';
-import * as imageSource from 'tns-core-modules/image-source';
-import { layout } from 'tns-core-modules/ui/core/view';
+import * as fs from '@nativescript/core/file-system';
+import * as utils from '@nativescript/core/utils/utils';
+import * as types from '@nativescript/core/utils/types';
+import * as imageSource from '@nativescript/core/image-source';
+import { Utils } from '@nativescript/core';
 
 declare const com, jp;
 
@@ -25,6 +26,13 @@ export class ImageZoom extends ImageZoomBase {
     public createNativeView() {
         this.picasso = (com as any).squareup.picasso.provider.PicassoProvider.get();
         return new com.github.chrisbanes.photoview.PhotoView(this._context);
+    }
+
+    public setTapListener( listener ) {
+        var attacher = new com.github.chrisbanes.photoview.PhotoViewAttacher(this.nativeView)
+        attacher.setOnViewTapListener( new com.github.chrisbanes.photoview.OnViewTapListener({
+            onViewTap: listener
+        }));
     }
 
     [minZoomScaleProperty.setNative](scale: number) {
@@ -220,29 +228,29 @@ export class ImageZoom extends ImageZoomBase {
         this.builder = this.builder
             .transform(
                 new RoundedCornersTransformation(
-                    layout.toDevicePixels(<any>this.style.borderTopLeftRadius),
-                    layout.toDevicePixels(<any>this.style.borderTopWidth),
+                    Utils.layout.toDevicePixels(<any>this.style.borderTopLeftRadius),
+                    Utils.layout.toDevicePixels(<any>this.style.borderTopWidth),
                     RoundedCornersTransformation.CornerType.TOP_LEFT
                 )
             )
             .transform(
                 new RoundedCornersTransformation(
-                    layout.toDevicePixels(<any>this.style.borderTopRightRadius),
-                    layout.toDevicePixels(<any>this.style.borderTopWidth),
+                    Utils.layout.toDevicePixels(<any>this.style.borderTopRightRadius),
+                    Utils.layout.toDevicePixels(<any>this.style.borderTopWidth),
                     RoundedCornersTransformation.CornerType.TOP_RIGHT
                 )
             )
             .transform(
                 new RoundedCornersTransformation(
-                    layout.toDevicePixels(<any>this.style.borderBottomLeftRadius),
-                    layout.toDevicePixels(<any>this.style.borderBottomWidth),
+                    Utils.layout.toDevicePixels(<any>this.style.borderBottomLeftRadius),
+                    Utils.layout.toDevicePixels(<any>this.style.borderBottomWidth),
                     RoundedCornersTransformation.CornerType.BOTTOM_LEFT
                 )
             )
             .transform(
                 new RoundedCornersTransformation(
-                    layout.toDevicePixels(<any>this.style.borderBottomRightRadius),
-                    layout.toDevicePixels(<any>this.style.borderBottomWidth),
+                    Utils.layout.toDevicePixels(<any>this.style.borderBottomRightRadius),
+                    Utils.layout.toDevicePixels(<any>this.style.borderBottomWidth),
                     RoundedCornersTransformation.CornerType.BOTTOM_RIGHT
                 )
             );

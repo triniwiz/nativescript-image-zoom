@@ -6,6 +6,18 @@
 
 ## Installation
 
+
+#### NativeScript 7x
+
+- `tns plugin add @triniwiz/nativescript-image-zoom`
+
+
+
+#### NativeScript 6<
+
+- `tns plugin add nativescript-image-zoom`
+
+
 ```
 tns plugin add nativescript-image-zoom
 ```
